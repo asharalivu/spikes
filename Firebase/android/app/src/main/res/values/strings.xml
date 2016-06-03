@@ -20,6 +20,4 @@
   <string name="send_invite">Send invite</string>
   <string name="check_out_bonfire">Check out Bonfire!\n%s</string>
 
-  <string name="twitter_api_key" translatable="false">hU4QilfQoioptcOMlH5DZtPly</string>
-  <string name="twitter_api_secret">j26jPfieiJVxfmAT91jf4ESh91Dw6DV7tYVtnwaCNJgbsau6xX</string>
 </resources>

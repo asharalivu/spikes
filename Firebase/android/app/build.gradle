@@ -4,17 +4,21 @@ android {
     compileSdkVersion 23
     buildToolsVersion "23.0.3"
 
+    Properties props = new Properties()
+    props.load(new FileInputStream(file("signing.properties")))
+
     defaultConfig {
         applicationId "com.novoda.bonfire"
         minSdkVersion 16
         targetSdkVersion 23
         versionCode 5
         versionName "0.0.3"
+        resValue "string", "twitter_api_key", props['twitterApiKey']
+        resValue "string", "io.fabric.ApiKey", props['twitterApiKey']
+        resValue "string", "twitter_api_secret", props['twitterApiSecret']
     }
     signingConfigs {
         release {
-            Properties props = new Properties()
-            props.load(new FileInputStream(file("signing.properties")))
             storeFile file(props['storeFile'])
             storePassword props['storePassword']
             keyAlias props['keyAlias']
