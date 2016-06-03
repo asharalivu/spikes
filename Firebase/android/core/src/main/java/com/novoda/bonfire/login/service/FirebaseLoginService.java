@@ -60,4 +60,18 @@ public class FirebaseLoginService implements LoginService {
                 });
     }
 
+    @Override
+    public void loginWithTwitter(String token, String secret) {
+        authDatabase.loginWithTwitter(token, secret)
+                .subscribe(new Action1<Authentication>() {
+                    @Override
+                    public void call(Authentication authentication) {
+                        if (authentication.isSuccess()) {
+                            userDatabase.writeCurrentUser(authentication.getUser());
+                        }
+                        authRelay.call(authentication);
+                    }
+                });
+    }
+
 }

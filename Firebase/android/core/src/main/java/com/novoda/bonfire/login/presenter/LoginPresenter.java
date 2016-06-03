@@ -51,6 +51,11 @@ public class LoginPresenter {
             navigator.toGooglePlusLogin();
         }
 
+        @Override
+        public void onTwitterLoginSelected() {
+            navigator.toTwitterLogin();
+        }
+
     };
 
     private final LoginNavigator.LoginResultListener loginResultListener = new LoginNavigator.LoginResultListener() {
@@ -60,7 +65,12 @@ public class LoginPresenter {
         }
 
         @Override
-        public void onGooglePlusLoginFailed(String statusMessage) {
+        public void onTwitterLoginSuccess(String token, String secret) {
+            loginService.loginWithTwitter(token, secret);
+        }
+
+        @Override
+        public void onLoginFailed(String statusMessage) {
             loginDisplayer.showAuthenticationError(statusMessage);
         }
     };

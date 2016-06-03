@@ -10,11 +10,13 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.auth.TwitterAuthProvider;
 import com.novoda.bonfire.login.data.model.Authentication;
 import com.novoda.bonfire.user.data.model.User;
 
 import rx.Observable;
 import rx.Subscriber;
+import rx.functions.Func0;
 
 public class FirebaseAuthDatabase implements AuthDatabase {
 
@@ -40,10 +42,30 @@ public class FirebaseAuthDatabase implements AuthDatabase {
 
     @Override
     public Observable<Authentication> loginWithGoogle(final String idToken) {
+        return getAuthenticationForCredential(new Func0<AuthCredential>() {
+            @Override
+            public AuthCredential call() {
+                return GoogleAuthProvider.getCredential(idToken, null);
+            }
+        });
+    }
+
+    @Override
+    public Observable<Authentication> loginWithTwitter(final String token, final String secret) {
+        return getAuthenticationForCredential(new Func0<AuthCredential>() {
+            @Override
+            public AuthCredential call() {
+                return TwitterAuthProvider.getCredential(token, secret);
+            }
+        });
+    }
+
+    @NonNull
+    private Observable<Authentication> getAuthenticationForCredential(final Func0<AuthCredential> credentialGenerator) {
         return Observable.create(new Observable.OnSubscribe<Authentication>() {
             @Override
             public void call(final Subscriber<? super Authentication> subscriber) {
-                AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
+                AuthCredential credential = credentialGenerator.call();
                 firebaseAuth.signInWithCredential(credential)
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override

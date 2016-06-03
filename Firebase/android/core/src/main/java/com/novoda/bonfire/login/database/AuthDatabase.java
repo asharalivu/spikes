@@ -10,4 +10,5 @@ public interface AuthDatabase {
 
     Observable<Authentication> loginWithGoogle(String idToken);
 
+    Observable<Authentication> loginWithTwitter(String token, String secret);
 }

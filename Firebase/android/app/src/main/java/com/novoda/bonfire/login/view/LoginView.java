@@ -2,7 +2,6 @@ package com.novoda.bonfire.login.view;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -13,7 +12,8 @@ import com.novoda.notils.caster.Views;
 
 public class LoginView extends LinearLayout implements LoginDisplayer {
 
-    private View loginButton;
+    private View googleLoginButton;
+    private TwitterLoginButton twitterLoginButton;
 
     public LoginView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -24,27 +24,35 @@ public class LoginView extends LinearLayout implements LoginDisplayer {
     protected void onFinishInflate() {
         super.onFinishInflate();
         View.inflate(getContext(), R.layout.merge_login_view, this);
-        loginButton = Views.findById(this, R.id.sign_in_button);
+        googleLoginButton = Views.findById(this, R.id.google_sign_in_button);
+        twitterLoginButton = Views.findById(this, R.id.twitter_login_button);
     }
 
     @Override
     public void attach(final LoginActionListener actionListener) {
-        loginButton.setOnClickListener(new OnClickListener() {
+        googleLoginButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 actionListener.onGooglePlusLoginSelected();
+            }
+        });
+        twitterLoginButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                actionListener.onTwitterLoginSelected();
             }
         });
     }
 
     @Override
     public void detach(LoginActionListener actionListener) {
-        loginButton.setOnClickListener(null);
+        googleLoginButton.setOnClickListener(null);
+        twitterLoginButton.setOnClickListener(null);
     }
 
     @Override
     public void showAuthenticationError(String message) {
-        Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show(); //TODO improve error display
+        Toast.makeText(getContext(), "Login failed: " + message, Toast.LENGTH_LONG).show(); //TODO improve error display
     }
 
 }

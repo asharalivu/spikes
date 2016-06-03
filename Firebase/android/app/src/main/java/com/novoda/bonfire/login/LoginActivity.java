@@ -14,8 +14,6 @@ import com.novoda.bonfire.navigation.AndroidNavigator;
 
 public class LoginActivity extends BaseActivity {
 
-    private static final int RC_SIGN_IN = 42;
-
     private LoginPresenter presenter;
     private AndroidLoginNavigator navigator;
 
@@ -24,11 +22,16 @@ public class LoginActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
-        LoginDisplayer loginDisplayer = (LoginDisplayer) findViewById(R.id.loginView);
         LoginGoogleApiClient loginGoogleApiClient = new LoginGoogleApiClient(this);
+        LoginTwitterApiClient loginTwitterApiClient = new LoginTwitterApiClient(this);
         loginGoogleApiClient.setupGoogleApiClient();
-        navigator = new AndroidLoginNavigator(this, loginGoogleApiClient, new AndroidNavigator(this));
-        presenter = new LoginPresenter(Dependencies.INSTANCE.getLoginService(), loginDisplayer, navigator);
+        loginTwitterApiClient.setupApiClient();
+        navigator = new AndroidLoginNavigator(this, loginGoogleApiClient, loginTwitterApiClient, new AndroidNavigator(this));
+        presenter = new LoginPresenter(
+                Dependencies.INSTANCE.getLoginService(),
+                (LoginDisplayer) findViewById(R.id.loginView),
+                navigator
+        );
     }
 
     @Override

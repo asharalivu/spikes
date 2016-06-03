@@ -10,4 +10,5 @@ public interface LoginService {
 
     void loginWithGoogle(String idToken);
 
+    void loginWithTwitter(String token, String secret);
 }

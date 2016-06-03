@@ -7,6 +7,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.novoda.bonfire.BaseActivity;
 import com.novoda.bonfire.channel.data.model.Channel;
 import com.novoda.bonfire.login.LoginGoogleApiClient;
+import com.novoda.bonfire.login.LoginTwitterApiClient;
 import com.novoda.notils.logger.simple.Log;
 
 public class AndroidLoginNavigator implements LoginNavigator {
@@ -15,12 +16,14 @@ public class AndroidLoginNavigator implements LoginNavigator {
 
     private final BaseActivity activity;
     private final LoginGoogleApiClient googleApiClient;
+    private final LoginTwitterApiClient twitterApiClient;
     private final Navigator navigator;
     private LoginResultListener loginResultListener;
 
-    public AndroidLoginNavigator(BaseActivity activity, LoginGoogleApiClient googleApiClient, Navigator navigator) {
+    public AndroidLoginNavigator(BaseActivity activity, LoginGoogleApiClient googleApiClient, LoginTwitterApiClient twitterApiClient, Navigator navigator) {
         this.activity = activity;
         this.googleApiClient = googleApiClient;
+        this.twitterApiClient = twitterApiClient;
         this.navigator = navigator;
     }
 
@@ -72,6 +75,11 @@ public class AndroidLoginNavigator implements LoginNavigator {
     }
 
     @Override
+    public void toTwitterLogin() {
+        twitterApiClient.logInWithCallback(loginResultListener);
+    }
+
+    @Override
     public void attach(LoginResultListener loginResultListener) {
         this.loginResultListener = loginResultListener;
     }
@@ -82,17 +90,21 @@ public class AndroidLoginNavigator implements LoginNavigator {
     }
 
     public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode != RC_SIGN_IN) {
-            return false;
+        if (requestCode == RC_SIGN_IN) {
+            GoogleSignInResult result = googleApiClient.getSignInResultFromIntent(data);
+            if (result.isSuccess()) {
+                GoogleSignInAccount account = result.getSignInAccount();
+                loginResultListener.onGooglePlusLoginSuccess(account.getIdToken());
+            } else {
+                Log.e("Failed to authenticate GooglePlus", result.getStatus().getStatusCode());
+                loginResultListener.onLoginFailed(result.getStatus().getStatusMessage());
+            }
+            return true;
+        } else if (requestCode == twitterApiClient.getRequestCode()) {
+            twitterApiClient.resolveSignInResult(requestCode, resultCode, data);
+            return true;
         }
-        GoogleSignInResult result = googleApiClient.getSignInResultFromIntent(data);
-        if (result.isSuccess()) {
-            GoogleSignInAccount account = result.getSignInAccount();
-            loginResultListener.onGooglePlusLoginSuccess(account.getIdToken());
-        } else {
-            Log.e("Failed to authenticate GooglePlus", result.getStatus().getStatusCode());
-            loginResultListener.onGooglePlusLoginFailed(result.getStatus().getStatusMessage());
-        }
-        return true;
+        return false;
+
     }
 }

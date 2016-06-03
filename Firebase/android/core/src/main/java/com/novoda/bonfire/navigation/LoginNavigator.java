@@ -4,6 +4,8 @@ public interface LoginNavigator extends Navigator {
 
     void toGooglePlusLogin();
 
+    void toTwitterLogin();
+
     void attach(LoginResultListener loginResultListener);
 
     void detach(LoginResultListener loginResultListener);
@@ -12,8 +14,9 @@ public interface LoginNavigator extends Navigator {
 
         void onGooglePlusLoginSuccess(String tokenId);
 
-        void onGooglePlusLoginFailed(String statusMessage);
+        void onLoginFailed(String statusMessage);
 
+        void onTwitterLoginSuccess(String token, String secret);
     }
 
 }
